@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
+
 export default class CreateUser extends Component {
 
     constructor(props) {
@@ -8,28 +9,21 @@ export default class CreateUser extends Component {
 
         this.state = {
             username: '',
-            email: '',
-            user_type: ''  
+            password: '',
+            user_type: ''
         }
 
         this.onChangeUsername = this.onChangeUsername.bind(this);
-        this.onChangeEmail = this.onChangeEmail.bind(this);
+        this.onChangepassword = this.onChangepassword.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
-        this.handleOptionChange = this.handleOptionChange.bind(this);
     }
-
-    handleOptionChange = changeEvent => {
-        this.setState({
-          user_type: changeEvent.target.value });
-      };
-
 
     onChangeUsername(event) {
         this.setState({ username: event.target.value });
     }
 
-    onChangeEmail(event) {
-        this.setState({ email: event.target.value });
+    onChangepassword(event) {
+        this.setState({ password: event.target.value });
     }
 
     onSubmit(e) {
@@ -37,23 +31,29 @@ export default class CreateUser extends Component {
 
         const newUser = {
             username: this.state.username,
-            email: this.state.email,
-            user_type: this.state.user_type
+            password: this.state.password
         }
 
-        axios.post('http://localhost:4000/add', newUser)
-            .then(res => console.log(res.data));
+
+        axios.post('http://localhost:4000/login', newUser)
+            .then(res => {
+                console.log(res.data.msg)
+                if (res.data.status === "0") {
+                    localStorage.setItem("user", newUser.username)
+                }
+            });
 
         this.setState({
             username: '',
-            email: '',
-            user_type: ''
+            password: ''
         });
     }
 
     render() {
         return (
+
             <div>
+                <h1>LOGIN PAGE</h1>
                 <form onSubmit={this.onSubmit}>
                     <div className="form-group">
                         <label>Username: </label>
@@ -63,25 +63,16 @@ export default class CreateUser extends Component {
                             onChange={this.onChangeUsername}
                         />
                     </div>
-                    
+
                     <div className="form-group">
-                        <label>Email: </label>
+                        <label>Password: </label>
                         <input type="text"
                             className="form-control"
-                            value={this.state.email}
-                            onChange={this.onChangeEmail}
+                            value={this.state.password}
+                            onChange={this.onChangepassword}
                         />
                     </div>
-
-                    {/* <div className="form-group">
-                        <label>Type: </label>
-                        <input type="text"
-                            className="form-control"
-                            value={this.state.user_type}
-                            onChange={this.onChangeType}
-                        />
-                    </div> */}
-
+                    {/* 
                     <div className="form-group">
                         <label>
                             <input
@@ -94,8 +85,8 @@ export default class CreateUser extends Component {
                             />
                             Buyer
                         </label>
-                     </div>
-                     <div className="form-group">   
+                    </div>
+                    <div className="form-group">
                         <label>
                             <input
                                 type="radio"
@@ -107,10 +98,10 @@ export default class CreateUser extends Component {
                             />
                             Seller
                         </label>
-                    </div>
+                    </div> */}
 
                     <div className="form-group">
-                        <input type="submit" value="Create User" className="btn btn-primary" />
+                        <input type="submit" value="Login" className="btn btn-primary" />
                     </div>
                 </form>
             </div>

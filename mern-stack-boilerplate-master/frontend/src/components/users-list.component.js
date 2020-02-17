@@ -25,7 +25,7 @@ export default class UsersList extends Component {
                     <thead>
                         <tr>
                             <th>Username</th>
-                            <th>Email</th>
+                            <th>Password</th>
                             <th>Type</th>
                         </tr>
                     </thead>
@@ -35,7 +35,7 @@ export default class UsersList extends Component {
                             return (
                                 <tr>
                                     <td>{currentUser.username}</td>
-                                    <td>{currentUser.email}</td>
+                                    <td>{currentUser.password}</td>
                                     <td>{currentUser.user_type}</td>
                                 </tr>
                             )

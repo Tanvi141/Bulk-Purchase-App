@@ -4,7 +4,7 @@ let User = new mongoose.Schema({
     username: {
         type: String
     },
-    email: {
+    password: {
         type: String 
     },
     user_type: {
