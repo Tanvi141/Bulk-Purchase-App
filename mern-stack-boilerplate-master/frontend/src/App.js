@@ -36,11 +36,11 @@ function App() {
         </nav>
 
         <br/>
+        <Route path="/seller/view_added" component={ViewAdded}/>
         <Route path="/" exact component={UsersList}/>
         <Route path="/create" component={CreateUser}/>
         <Route path="/login" component={Login}/>
         <Route path="/seller/add_product" component={AddProduct}/>
-        <Route path="/seller/view_added" component={ViewAdded}/>
       </div>
     </Router>
   );

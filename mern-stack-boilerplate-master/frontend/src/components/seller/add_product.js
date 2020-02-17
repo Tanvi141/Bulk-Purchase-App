@@ -44,7 +44,8 @@ export default class AddProduct extends Component {
 
         axios.post('http://localhost:4000/seller/add_product', Product)
             .then(res =>{ 
-                console.log(res);
+                console.log(res)
+                console.log(res.data.msg);
                 alert(res.data.msg)
             });
 

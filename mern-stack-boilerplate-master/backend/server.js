@@ -148,11 +148,11 @@ userRoutes.route('/seller/add_product').post(function (req, res) {
         res.json(send)
     }
 
-    Products.find({name:name}, function(err, product) {
+    Products.find({ name: name}, function(err, product) {
         if (err)
             console.log(err);
         else {
-            if (product.length!=0) {
+            if (product.name==name) {
                 send.msg="Product exists already with this name";
                 send.status="3";
                 res.json(send)
