@@ -41,6 +41,7 @@ export default class CreateUser extends Component {
                 if (res.data.status === "0") {
                     localStorage.setItem("user", newUser.username)
                 }
+                alert(res.data.msg)
             });
 
         this.setState({

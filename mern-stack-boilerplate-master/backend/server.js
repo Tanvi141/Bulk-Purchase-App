@@ -11,12 +11,14 @@ const userRoutes = express.Router();
 
 
 let User = require('./models/user');
+let Products = require('./models/products');
 
 app.use(cors());
 app.use(bodyParser.json());
 
 // Connection to mongodb
 mongoose.connect('mongodb://127.0.0.1:27017/users', { useNewUrlParser: true });
+mongoose.connect('mongodb://127.0.0.1:27017/products', { useNewUrlParser: true });
 const connection = mongoose.connection;
 connection.once('open', function () {
     console.log("MongoDB database connection established succesfully.");
@@ -110,6 +112,7 @@ userRoutes.route('/login').post(function (req, res) {
                     else{
                         send.msg="Credentials Valid";
                         send.status="0";
+                        send.id=user._id
                         res.json(send)
                     }
                 })
@@ -117,6 +120,69 @@ userRoutes.route('/login').post(function (req, res) {
 
 });
 
+//Seller adds a product
+userRoutes.route('/seller/add_product').post(function (req, res) {
+
+    let send={
+        status:"-1",
+        msg:"temp"
+    };
+
+    let product = new Products(req.body);
+    const { name, price, quantity, quantity_left, user } = req.body;
+
+    //make sure is logged in as a Seller
+    User.findOne({ username:user })
+        .then(user => {
+            if (user.user_type==="Buyer"){
+                send.msg="Must be logged in as a Seller";
+                send.status="2";
+                res.json(send)
+            }
+        })
+
+    //all fields need to be present
+    if (!name || !quantity || !price) {
+        send.msg="Incomplete fields";
+        send.status="2";
+        res.json(send)
+    }
+
+    Products.find({ name: name}, function(err, product) {
+        if (err)
+            console.log(err);
+        else {
+            if (product.name==name) {
+                send.msg="Product exists already with this name";
+                send.status="3";
+                res.json(send)
+            }
+
+            else{   
+                const newproduct = new Products({
+                    name,
+                    price,
+                    quantity,
+                    quantity_left,
+                    user
+                });
+
+                newproduct.save()
+                send.msg="Successfully Added";
+                send.status="0";
+                res.json(send)
+            }  
+        }
+    });
+});
+
+//Seller views all registered products
+userRoutes.route('/seller/view').post(function (req, res) {
+    Products.find({selled_id: req.body.user},function(err, result) {
+        if (err) throw err;
+        res.json(result)
+    });
+});
 
 // Getting a user by id
 userRoutes.route('/:id').get(function (req, res) {
