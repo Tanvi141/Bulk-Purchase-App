@@ -32,8 +32,9 @@ export default class ViewAdded extends Component {
                  alert(response.data.msg)
              })
              .catch(function(error) {    
-             console.log(error);
+                console.log(error);
              })
+        // somehow reload the page to remove the entry
     }
 
     render() {

@@ -197,9 +197,9 @@ userRoutes.route('/seller/delete_product').post(function (req, res) {
         msg:"temp"
     };
 
-    const { name, price, quantity, quantity_left, seller_id, status } = req.body;
+    // const { name, price, quantity, quantity_left, seller_id, status } = req.body;
 
-    Products.findOneAndUpdate({ name: name, seller_id: seller_id},{$set:{status:"Deleted"}}, function(err, product) {
+    Products.findOneAndUpdate({ _id:req.body._id },{$set:{status:"Deleted"}}, function(err, product) {
         if (err){
             console.log(err);
             send.status=1;

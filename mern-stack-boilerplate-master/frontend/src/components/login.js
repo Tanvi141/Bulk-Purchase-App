@@ -41,7 +41,6 @@ export default class CreateUser extends Component {
                 if (res.data.status === "0") {
                     localStorage.setItem("user", newUser.username)
                     if(res.data.type=== "Seller"){
-                        console.log("jumping")
                         this.props.history.push("/seller/seller_home");
                     }
                 }
