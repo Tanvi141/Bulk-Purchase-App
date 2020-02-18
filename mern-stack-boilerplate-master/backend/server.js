@@ -12,6 +12,7 @@ const userRoutes = express.Router();
 
 let User = require('./models/user');
 let Products = require('./models/products');
+let Bookings = require('./models/bookings')
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -222,6 +223,52 @@ userRoutes.route('/seller/delete_product').post(function (req, res) {
     });
 });
 
+//Try to place an order
+userRoutes.route('/buyer/trybuy').post(function (req, res) {
+
+    let send={
+        status:"-1",
+        msg:"temp"
+    };
+
+
+    console.log(req.body.buyer_name)
+    console.log(-1*Number(req.body.value))
+    Products.find({$and:[{_id:req.body.item._id},{ quantity_left: { $gte: Number(req.body.value) }} ] }, function(err, product) {
+        if (err){
+            console.log(err)
+        }
+        else{
+            if(product.length===0){
+                send.stats=1;
+                send.msg="Amount entered too large";
+                res.json(send)
+            }
+            else{
+                Products.findOneAndUpdate({ _id:req.body.item._id },{$inc:{quantity_left:-1*Number(req.body.value)}}, function(err, product) {
+                    if (err){
+                        console.log(err);
+                        send.status=2;
+                        send.msg="Error in Updating";
+                        res.json(send)
+                    }
+                    else { 
+                        const newbooking = new Bookings({
+                            product_id:req.body.item._id,
+                            buyer_name:req.body.buyer_name,
+                            quantity:Number(req.body.value),
+                            status_by_buyer:"Active"
+                        });
+                        newbooking.save()
+                        send.status=0;
+                        send.msg="Order succesfully placed!";
+                        res.json(send)  
+                    }
+                });        
+            }
+        }
+    });
+});
 
 app.use('/', userRoutes);
 

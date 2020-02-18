@@ -47,7 +47,9 @@ export default class CreateUser extends Component {
                         this.props.history.push("/buyer/buyer_home");
                     }
                 }
-                alert(res.data.msg)
+                else{
+                    alert(res.data.msg)
+                }            
             });
 
         this.setState({

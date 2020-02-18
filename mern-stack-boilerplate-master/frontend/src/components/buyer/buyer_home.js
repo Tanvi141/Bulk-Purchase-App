@@ -16,7 +16,7 @@ export default class Buyer_Home extends Component {
                             <div className="collapse navbar-collapse">
                                 <ul className="navbar-nav mr-auto">
                                     <li className="navbar-item">
-                                        <Link to="/buyer/view_items" className="nav-link">View Items</Link>
+                                        <Link to="/buyer/view_items" className="nav-link">Search Items</Link>
                                     </li>
                                     {/* <li className="navbar-item">
                                         <Link to="/seller/view_added" className="nav-link">View Added</Link>
