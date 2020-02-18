@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 
 // Connection to mongodb
 mongoose.connect('mongodb://127.0.0.1:27017/users', { useNewUrlParser: true });
-mongoose.connect('mongodb://127.0.0.1:27017/products', { useNewUrlParser: true });
+// mongoose.connect('mongodb://127.0.0.1:27017/products', { useNewUrlParser: true });
 const connection = mongoose.connection;
 connection.once('open', function () {
     console.log("MongoDB database connection established succesfully.");
@@ -129,56 +129,59 @@ userRoutes.route('/seller/add_product').post(function (req, res) {
     };
 
     let product = new Products(req.body);
-    const { name, price, quantity, quantity_left, user } = req.body;
+    const { name, price, quantity, quantity_left, seller_id } = req.body;
 
-    //make sure is logged in as a Seller
-    User.findOne({ username:user })
-        .then(user => {
-            if (user.user_type==="Buyer"){
-                send.msg="Must be logged in as a Seller";
-                send.status="2";
-                res.json(send)
-            }
-        })
-
-    //all fields need to be present
+    // all fields need to be present
     if (!name || !quantity || !price) {
         send.msg="Incomplete fields";
         send.status="2";
         res.json(send)
     }
 
-    Products.find({ name: name}, function(err, product) {
-        if (err)
-            console.log(err);
-        else {
-            if (product.name==name) {
-                send.msg="Product exists already with this name";
-                send.status="3";
+
+    //make sure is logged in as a Seller
+    User.findOne({ username:seller_id })
+        .then(user => {
+            if (user.user_type==="Buyer"){
+                send.msg="Must be logged in as a Seller";
+                send.status="2";
                 res.json(send)
             }
+            else{
+                Products.find({ name: name, seller_id: seller_id}, function(err, product) {
+                    if (err)
+                        console.log(err);
+                    else {
+                        if (product.length!=0 ) {
+                            send.msg="Product exists already with this name registered by you";
+                            send.status="3";
+                            res.json(send)
+                        }
 
-            else{   
-                const newproduct = new Products({
-                    name,
-                    price,
-                    quantity,
-                    quantity_left,
-                    user
+                        else{   
+                            const newproduct = new Products({
+                                name,
+                                price,
+                                quantity,
+                                quantity_left,
+                                seller_id
+                            });
+
+                            newproduct.save()
+                            send.msg="Successfully Added";
+                            send.status="0";
+                            res.json(send)
+                        }  
+                    }
                 });
+            }
+        })
 
-                newproduct.save()
-                send.msg="Successfully Added";
-                send.status="0";
-                res.json(send)
-            }  
-        }
-    });
 });
 
 //Seller views all registered products
 userRoutes.route('/seller/view').post(function (req, res) {
-    Products.find({selled_id: req.body.user},function(err, result) {
+    Products.find({seller_id: req.body.user},function(err, result) {
         if (err) throw err;
         res.json(result)
     });

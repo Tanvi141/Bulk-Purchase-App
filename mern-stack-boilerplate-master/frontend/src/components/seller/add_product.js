@@ -39,7 +39,7 @@ export default class AddProduct extends Component {
             price: this.state.Price,
             quantity: this.state.Quantity,
             quantity_left: this.state.Quantity,
-            user: localStorage.getItem("user")
+            seller_id: localStorage.getItem("user")
         }
 
         axios.post('http://localhost:4000/seller/add_product', Product)
