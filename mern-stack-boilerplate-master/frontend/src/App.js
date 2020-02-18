@@ -5,8 +5,9 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import UsersList from './components/users-list.component'
 import CreateUser from './components/create-user.component'
 import Login from './components/login'
-import AddProduct from './components/seller/add_product'
-import ViewAdded from './components/seller/view_added'
+import Seller_Home from './components/seller/seller_home';
+// import AddProduct from './components/seller/add_product'
+// import ViewAdded from './components/seller/view_added'
 
 function App() {
   return (
@@ -25,12 +26,12 @@ function App() {
               <li className="navbar-item">
                 <Link to="/create" className="nav-link">Create User</Link>
               </li>
-              <li className="navbar-item">
+              {/* <li className="navbar-item">
                 <Link to="/seller/add_product" className="nav-link">Add Product</Link>
               </li>
               <li className="navbar-item">
                 <Link to="/seller/view_added" className="nav-link">View Added</Link>
-              </li>
+              </li> */}
             </ul>
           </div>
         </nav>
@@ -39,8 +40,7 @@ function App() {
         <Route path="/" exact component={UsersList}/>
         <Route path="/create" component={CreateUser}/>
         <Route path="/login" component={Login}/>
-        <Route path="/seller/add_product" component={AddProduct}/>
-        <Route path="/seller/view_added" component={ViewAdded}/>
+        <Route path="/seller/seller_home" component={Seller_Home}/> 
       </div>
     </Router>
   );

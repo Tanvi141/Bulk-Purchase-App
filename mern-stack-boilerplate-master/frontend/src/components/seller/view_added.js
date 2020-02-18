@@ -24,6 +24,18 @@ export default class ViewAdded extends Component {
              })
     }
 
+    edit = (data) => { 
+        // console.log(data)
+        axios.post('http://localhost:4000/seller/delete_product',data)
+             .then(response => {
+                 console.log(response);
+                 alert(response.data.msg)
+             })
+             .catch(function(error) {    
+             console.log(error);
+             })
+    }
+
     render() {
         return (
             <div>
@@ -34,6 +46,7 @@ export default class ViewAdded extends Component {
                             <th>Price</th>
                             <th>Quantity</th>
                             <th>Quantity Left</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,6 +58,7 @@ export default class ViewAdded extends Component {
                                     <td>{currentProduct.price}</td>
                                     <td>{currentProduct.quantity}</td>
                                     <td>{currentProduct.quantity_left}</td>
+                                    <td><button onClick={() => this.edit(currentProduct)}>Delete</button></td>
                                 </tr>
                             )
                         })

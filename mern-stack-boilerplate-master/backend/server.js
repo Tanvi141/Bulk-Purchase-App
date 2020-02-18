@@ -87,7 +87,8 @@ userRoutes.route('/login').post(function (req, res) {
 
     let send={
         status:"-1",
-        msg:"temp"
+        msg:"temp",
+        type:""
     };
 
     let Username = req.body.username;
@@ -112,7 +113,7 @@ userRoutes.route('/login').post(function (req, res) {
                     else{
                         send.msg="Credentials Valid";
                         send.status="0";
-                        send.id=user._id
+                        send.type=user.user_type
                         res.json(send)
                     }
                 })
@@ -148,11 +149,11 @@ userRoutes.route('/seller/add_product').post(function (req, res) {
                 res.json(send)
             }
             else{
-                Products.find({ name: name, seller_id: seller_id}, function(err, product) {
+                Products.find({ $and : [{name: name, seller_id: seller_id}, {$or : [ { status : "Available" }, { status : "Posted"}]}]}, function(err, product) {
                     if (err)
                         console.log(err);
                     else {
-                        if (product.length!=0 ) {
+                        if (product.length!=0) {
                             send.msg="Product exists already with this name registered by you";
                             send.status="3";
                             res.json(send)
@@ -164,7 +165,8 @@ userRoutes.route('/seller/add_product').post(function (req, res) {
                                 price,
                                 quantity,
                                 quantity_left,
-                                seller_id
+                                seller_id,
+                                status:"Available"
                             });
 
                             newproduct.save()
@@ -181,19 +183,37 @@ userRoutes.route('/seller/add_product').post(function (req, res) {
 
 //Seller views all registered products
 userRoutes.route('/seller/view').post(function (req, res) {
-    Products.find({seller_id: req.body.user},function(err, result) {
+    Products.find({seller_id: req.body.user, status: "Available"},function(err, result) {
         if (err) throw err;
         res.json(result)
     });
 });
 
-// Getting a user by id
-userRoutes.route('/:id').get(function (req, res) {
-    let id = req.params.id;
-    User.findById(id, function (err, user) {
-        res.json(user);
+//Delete a product
+userRoutes.route('/seller/delete_product').post(function (req, res) {
+
+    let send={
+        status:"-1",
+        msg:"temp"
+    };
+
+    const { name, price, quantity, quantity_left, seller_id, status } = req.body;
+
+    Products.findOneAndUpdate({ name: name, seller_id: seller_id},{$set:{status:"Deleted"}}, function(err, product) {
+        if (err){
+            console.log(err);
+            send.status=1;
+            send.msg="Error in deleting";
+            res.json(send)
+        }
+        else { 
+            send.status=0;
+            send.msg="Deleted";
+            res.json(send)  
+        }
     });
 });
+
 
 app.use('/', userRoutes);
 

@@ -37,9 +37,13 @@ export default class CreateUser extends Component {
 
         axios.post('http://localhost:4000/login', newUser)
             .then(res => {
-                console.log(res.data.msg)
+                console.log(res)
                 if (res.data.status === "0") {
                     localStorage.setItem("user", newUser.username)
+                    if(res.data.type=== "Seller"){
+                        console.log("jumping")
+                        this.props.history.push("/seller/seller_home");
+                    }
                 }
                 alert(res.data.msg)
             });

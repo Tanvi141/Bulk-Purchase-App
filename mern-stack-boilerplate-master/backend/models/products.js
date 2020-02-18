@@ -16,6 +16,10 @@ let Products = new mongoose.Schema({
     seller_id:{
         // username
         type: String
+    },
+    status:{
+        //Available, Placed, Dispatched, Deleted
+        type: String
     }
 });
 
