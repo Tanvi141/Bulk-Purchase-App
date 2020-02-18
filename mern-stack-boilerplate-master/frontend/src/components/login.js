@@ -43,6 +43,9 @@ export default class CreateUser extends Component {
                     if(res.data.type=== "Seller"){
                         this.props.history.push("/seller/seller_home");
                     }
+                    else{
+                        this.props.history.push("/buyer/buyer_home");
+                    }
                 }
                 alert(res.data.msg)
             });

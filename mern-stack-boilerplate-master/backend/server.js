@@ -181,9 +181,17 @@ userRoutes.route('/seller/add_product').post(function (req, res) {
 
 });
 
-//Seller views all registered products
+//Seller views all products of certain type
 userRoutes.route('/seller/view').post(function (req, res) {
-    Products.find({seller_id: req.body.user, status: "Available"},function(err, result) {
+    Products.find({seller_id: req.body.user, status: req.body.type },function(err, result) {
+        if (err) throw err;
+        res.json(result)
+    });
+});
+
+//Buyer search results
+userRoutes.route('/buyer/results').post(function (req, res) {
+    Products.find({name: req.body.search, status:"Available"},function(err, result) {
         if (err) throw err;
         res.json(result)
     });

@@ -6,6 +6,7 @@ import UsersList from './components/users-list.component'
 import CreateUser from './components/create-user.component'
 import Login from './components/login'
 import Seller_Home from './components/seller/seller_home';
+import Buyer_Home from './components/buyer/buyer_home';
 // import AddProduct from './components/seller/add_product'
 // import ViewAdded from './components/seller/view_added'
 
@@ -41,6 +42,7 @@ function App() {
         <Route path="/create" component={CreateUser}/>
         <Route path="/login" component={Login}/>
         <Route path="/seller/seller_home" component={Seller_Home}/> 
+        <Route path="/buyer/buyer_home" component={Buyer_Home}/> 
       </div>
     </Router>
   );

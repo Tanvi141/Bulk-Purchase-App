@@ -10,13 +10,13 @@ export default class ViewAdded extends Component {
 
     componentDidMount(){
         const send={
-            user:localStorage.getItem("user")
+            user: localStorage.getItem("user")
         }
-
+        send.type="Available";
+    
         axios.post('http://localhost:4000/seller/view',send)
              .then(response => {
                  this.setState({products: response.data});
-                 console.log("got the stuff")
                  console.log(response)
              })
              .catch(function(error) {
