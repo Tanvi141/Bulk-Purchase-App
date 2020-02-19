@@ -18,6 +18,11 @@ export default class CreateUser extends Component {
         this.onSubmit = this.onSubmit.bind(this);
     }
 
+    componentDidMount(){
+        localStorage.setItem("user", " ");
+        // this.props.history.push("/login");
+    }
+
     onChangeUsername(event) {
         this.setState({ username: event.target.value });
     }

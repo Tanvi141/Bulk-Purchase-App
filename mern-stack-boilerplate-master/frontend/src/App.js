@@ -7,8 +7,10 @@ import CreateUser from './components/create-user.component'
 import Login from './components/login'
 import Seller_Home from './components/seller/seller_home';
 import Buyer_Home from './components/buyer/buyer_home';
+// import Logout from './components/login'
 // import AddProduct from './components/seller/add_product'
 // import ViewAdded from './components/seller/view_added'
+
 
 function App() {
   return (
@@ -27,20 +29,19 @@ function App() {
               <li className="navbar-item">
                 <Link to="/create" className="nav-link">Create User</Link>
               </li>
-              {/* <li className="navbar-item">
-                <Link to="/seller/add_product" className="nav-link">Add Product</Link>
-              </li>
               <li className="navbar-item">
-                <Link to="/seller/view_added" className="nav-link">View Added</Link>
-              </li> */}
+                <Link to="/logout" className="nav-link">Logout</Link>
+              </li>
+              {/* <li className="navbar-item"> */}
+              {/* <Link to="/logout" className="nav-link">{localStorage.getItem("user")}</Link></li> */}
             </ul>
           </div>
         </nav>
-
         <br/>
         <Route path="/" exact component={UsersList}/>
         <Route path="/create" component={CreateUser}/>
         <Route path="/login" component={Login}/>
+        <Route path="/logout" component={Login}/>
         <Route path="/seller/seller_home" component={Seller_Home}/> 
         <Route path="/buyer/buyer_home" component={Buyer_Home}/> 
       </div>

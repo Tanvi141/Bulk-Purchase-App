@@ -10,7 +10,7 @@ export default class Buyer_Home extends Component {
     render() {
         return (
             <div>
-                <h1>Welcome Buyer</h1>
+                <h1>Welcome {localStorage.getItem("user")} (Buyer)</h1>
                 <Router>
                     <div className="HomePage">
                         <nav className="navbar navbar-expand-lg navbar-light bg-light">

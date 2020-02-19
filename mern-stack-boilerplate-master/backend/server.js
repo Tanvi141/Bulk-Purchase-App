@@ -142,7 +142,8 @@ userRoutes.route('/seller/add_product').post(function (req, res) {
 
 
     //make sure is logged in as a Seller
-    User.findOne({ username:seller_id })
+    else{
+        User.findOne({ username:seller_id })
         .then(user => {
             if (user.user_type==="Buyer"){
                 send.msg="Must be logged in as a Seller";
@@ -179,7 +180,7 @@ userRoutes.route('/seller/add_product').post(function (req, res) {
                 });
             }
         })
-
+    }
 });
 
 //Seller views all products of certain type
@@ -237,6 +238,31 @@ userRoutes.route('/seller/delete_product').post(function (req, res) {
         else { 
             send.status=0;
             send.msg="Deleted";
+            res.json(send)  
+        }
+    });
+});
+
+//Dispatch a product by a seller
+userRoutes.route('/seller/dispatch_product').post(function (req, res) {
+
+    let send={
+        status:"-1",
+        msg:"temp"
+    };
+
+    // const { name, price, quantity, quantity_left, seller_id, status } = req.body;
+
+    Products.findOneAndUpdate({ _id:req.body._id },{$set:{status:"Dispatched"}}, function(err, product) {
+        if (err){
+            console.log(err);
+            send.status=1;
+            send.msg="Error in dipatching";
+            res.json(send)
+        }
+        else { 
+            send.status=0;
+            send.msg="Dispatched";
             res.json(send)  
         }
     });
@@ -316,6 +342,25 @@ userRoutes.route('/buyer/trybuy').post(function (req, res) {
 
 //Get bookings of a buyer
 userRoutes.route('/buyer/view').post(function (req, res) {
+    //update statuses also
+    Products.update({ quantity_left: 0, status:"Available"},{$set:{status:"Posted"}},{multi:true},
+        function(err, product) {
+            if (err){
+                console.log(err);
+            }
+            else {  
+        }
+    });
+
+    Products.update({quantity_left:{$ne:0}, status:"Posted"},{$set:{status:"Available"}},{multi:true},
+        function(err, product) {
+            if (err){
+                console.log(err);
+            }
+            else {  
+        }
+    });
+    
     Bookings.find({buyer_name: req.body.user},function(err, result) {
         if (err) throw err;
         res.json(result)
