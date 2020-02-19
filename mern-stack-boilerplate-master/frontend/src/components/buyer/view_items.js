@@ -90,7 +90,6 @@ class TableContent extends React.Component {
         });
     }
 
-
     render() {
         return (
             <div>
@@ -99,8 +98,10 @@ class TableContent extends React.Component {
                     <tr>
                         <th>Name</th>
                         <th>Price</th>
+                        <th>Quantity Total</th>
                         <th>Quantity Left</th>
                         <th>Seller</th>
+                        <th>Status</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -111,8 +112,10 @@ class TableContent extends React.Component {
                             <tr>
                                 <td>{currentProduct.name}</td>
                                 <td>{currentProduct.price}</td>
+                                <td>{currentProduct.quantity}</td>
                                 <td>{currentProduct.quantity_left}</td>
                                 <td>{currentProduct.seller_id}</td>
+                                <td>{currentProduct.status}</td>
                                 <td><button onClick={() => this.edit(currentProduct)}>Order</button></td>
                             </tr>
                         )
@@ -157,6 +160,7 @@ class PlaceOrder extends React.Component {
         axios.post('http://localhost:4000/buyer/trybuy',send)
              .then(response => {
                  alert(response.data.msg)
+                 console.log(response)
              })
              .catch(function(error) {
                  console.log(error);

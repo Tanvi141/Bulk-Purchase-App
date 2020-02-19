@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css"
 
 import ViewItems from '../buyer/view_items'
+import ViewBookings from '../buyer/view_bookings'
 
 export default class Buyer_Home extends Component {
     render() {
@@ -18,14 +19,15 @@ export default class Buyer_Home extends Component {
                                     <li className="navbar-item">
                                         <Link to="/buyer/view_items" className="nav-link">Search Items</Link>
                                     </li>
-                                    {/* <li className="navbar-item">
-                                        <Link to="/seller/view_added" className="nav-link">View Added</Link>
-                                    </li> */}
+                                    <li className="navbar-item">
+                                        <Link to="/buyer/view_bookings" className="nav-link">View Bookings</Link>
+                                    </li>
                                 </ul>
                             </div>
                         </nav>
                         <br />
                         <Route path="/buyer/view_items" exact component={ViewItems} />
+                        <Route path="/buyer/view_bookings" component={ViewBookings} />
                     </div>
                 </Router>
             </div>

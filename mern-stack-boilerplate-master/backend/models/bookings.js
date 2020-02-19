@@ -12,6 +12,28 @@ let Bookings = new mongoose.Schema({
     },
     status_by_buyer:{
         type: String
+    },
+    name: {
+        type: String
+    },
+    price: {
+        type: Number 
+    },
+    quantity_total: {
+        type: Number
+    },
+    quantity_left: {
+        //update
+        type: Number
+    },
+    seller_id:{
+        // username
+        type: String
+    },
+    status:{
+        //update
+        //Available, Placed, Dispatched, Deleted
+        type: String
     }
 });
 

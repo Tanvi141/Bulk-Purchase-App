@@ -192,13 +192,32 @@ userRoutes.route('/seller/view').post(function (req, res) {
 
 //Buyer search results
 userRoutes.route('/buyer/results').post(function (req, res) {
+    //update statuses also
+    Products.update({ quantity_left: 0, status:"Available"},{$set:{status:"Posted"}},{multi:true},
+        function(err, product) {
+            if (err){
+                console.log(err);
+            }
+            else {  
+        }
+    });
+
+    Products.update({quantity_left:{$ne:0}, status:"Posted"},{$set:{status:"Available"}},{multi:true},
+        function(err, product) {
+            if (err){
+                console.log(err);
+            }
+            else {  
+        }
+    });
+
     Products.find({name: req.body.search, status:"Available"},function(err, result) {
         if (err) throw err;
         res.json(result)
     });
 });
 
-//Delete a product
+//Delete a product by seller
 userRoutes.route('/seller/delete_product').post(function (req, res) {
 
     let send={
@@ -226,6 +245,25 @@ userRoutes.route('/seller/delete_product').post(function (req, res) {
 //Try to place an order
 userRoutes.route('/buyer/trybuy').post(function (req, res) {
 
+    //update statuses also
+    Products.update({ quantity_left: 0, status:"Available"},{$set:{status:"Posted"}},{multi:true},
+        function(err, product) {
+            if (err){
+                console.log(err);
+            }
+            else {  
+        }
+    });
+
+    Products.update({quantity_left:{$ne:0}, status:"Posted"},{$set:{status:"Available"}},{multi:true},
+        function(err, product) {
+            if (err){
+                console.log(err);
+            }
+            else {  
+        }
+    });
+
     let send={
         status:"-1",
         msg:"temp"
@@ -234,7 +272,7 @@ userRoutes.route('/buyer/trybuy').post(function (req, res) {
 
     console.log(req.body.buyer_name)
     console.log(-1*Number(req.body.value))
-    Products.find({$and:[{_id:req.body.item._id},{ quantity_left: { $gte: Number(req.body.value) }} ] }, function(err, product) {
+    Products.find({$and:[{_id:req.body.item._id},{ quantity_left: { $gte: Number(req.body.value) }},{status:"Available"} ] }, function(err, product) {
         if (err){
             console.log(err)
         }
@@ -257,9 +295,15 @@ userRoutes.route('/buyer/trybuy').post(function (req, res) {
                             product_id:req.body.item._id,
                             buyer_name:req.body.buyer_name,
                             quantity:Number(req.body.value),
-                            status_by_buyer:"Active"
+                            status_by_buyer:"Active",
+                            name: req.body.item.name,
+                            price: req.body.item.price,
+                            quantity_total: req.body.item.quantity,
+                            quantity_left:req.body.item.quantity_left,
+                            seller_id: req.body.item.seller_id,
+                            status: req.body.item.status
                         });
-                        newbooking.save()
+                        newbooking.save();
                         send.status=0;
                         send.msg="Order succesfully placed!";
                         res.json(send)  
@@ -267,6 +311,124 @@ userRoutes.route('/buyer/trybuy').post(function (req, res) {
                 });        
             }
         }
+    });
+});
+
+//Get bookings of a buyer
+userRoutes.route('/buyer/view').post(function (req, res) {
+    Bookings.find({buyer_name: req.body.user},function(err, result) {
+        if (err) throw err;
+        res.json(result)
+    });
+});
+
+//For the View Status button
+userRoutes.route('/buyer/volstatus').post(function (req, res) {
+    //update statuses also
+    Products.update({ quantity_left: 0, status:"Available"},{$set:{status:"Posted"}},{multi:true},
+        function(err, product) {
+            if (err){
+                console.log(err);
+            }
+            else {  
+        }
+    });
+
+    Products.update({quantity_left:{$ne:0}, status:"Posted"},{$set:{status:"Available"}},{multi:true},
+        function(err, product) {
+            if (err){
+                console.log(err);
+            }
+            else {  
+        }
+    });
+
+    Products.find({_id: req.body.product_id},function(err, result) {
+        if (err) throw err;
+        res.json(result)
+    });
+});
+
+
+//Get bookings of a buyer
+userRoutes.route('/buyer/lol').post(function (req, res) {
+    console.log("here")
+    Bookings.find({buyer_name: req.body.user},function(err, data) {
+        if (err) throw err;
+        else{
+            var jsondata = JSON.parse(JSON.stringify(data));
+            // console.log(jsondata)
+            var i;
+            for (i=0; i<jsondata.length; i++){
+                var prod = jsondata[i].product_id;
+                var amt= jsondata[i].quantity;
+                // console.log(amt)
+                
+                Products.find({_id:prod},function(err, result) {
+                    if (err) throw err;
+                    else{
+                        // res.write(JSON.stringify(result));
+                        var temp=(JSON.parse(JSON.stringify(result)));
+                        // console.log("temp")
+                        // console.log(temp[0].name);
+                        send={
+                            name: temp.name,
+                            seller: temp[0].seller_id,
+                            price: temp[0].price,
+                            quantity: temp[0].quantity,
+                            ordered: amt,
+                            status: temp[0].status
+                        }
+                        res.write(JSON.stringify(send),function(lol){
+                            if(i===jsondata.length){
+                                res.send();
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+});
+
+//Cancel an order
+userRoutes.route('/buyer/cancel').post(function (req, res) {
+
+    let send={
+        status:"-1",
+        msg:"temp"
+    };
+    console.log(req)
+    Products.findOneAndUpdate({$and :[{name: req.body.item.name, seller_id: req.body.item.seller_id}, { $or : [ { status: "Available" }, { status: "Posted" } ] } ]},{$inc:{quantity_left:Number(req.body.item.quantity)}}, function(err, product) {
+        if (err){
+            console.log(err);
+            send.status=1;
+            send.msg="Cannot cancel dispatched/cancelled orders";
+            res.json(send)
+        }
+        else { 
+            Bookings.findOneAndUpdate({buyer_name: req.body.user, seller_id: req.body.item.seller_id},{$set:{status_by_buyer:"Cancelled"}}, function(err, product) {
+                if (err){
+                    console.log(err);
+                    send.status=2;
+                    send.msg="Error in updating";
+                    res.json(send)
+                }
+                else { 
+                    send.status=0;
+                    send.msg="Cancelled";
+                    res.json(send)  
+                }
+            });  
+        }
+    });   
+});
+
+//Get specific item
+userRoutes.route('/buyer/getitnow').post(function (req, res) {
+    Bookings.find({buyer_name: req.body.user, seller_id: req.body.item.seller_id},function(err, result) {
+        if (err) throw err;
+        res.json(result)
     });
 });
 
