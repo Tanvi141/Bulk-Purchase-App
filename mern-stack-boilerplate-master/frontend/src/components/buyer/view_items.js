@@ -79,15 +79,34 @@ class TableContent extends React.Component {
         // console.log(this.props.products);
         this.state={
             showComponent : false,
+            showComponent2 : false,
+            showComponent1 : false,
         };
     }
 
     edit = (data) => { 
         // console.log(data)
         this.setState({
-            buy: data,
+            togo: data,
             showComponent: true
         });
+    }
+
+    func = (data) => { 
+        // console.log(data)
+        axios.post('http://localhost:4000/buyer/getreview',data)
+             .then(response => {
+                this.setState({
+                    seller: data.seller_id,
+                    buy: response.data.result,
+                    avg: response.data.avg,
+                    showComponent2: true
+                });
+            })
+             .catch(function(error) {
+                 console.log(error);
+            })
+        
     }
 
     render() {
@@ -103,6 +122,7 @@ class TableContent extends React.Component {
                         <th>Seller</th>
                         <th>Status</th>
                         <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -116,6 +136,7 @@ class TableContent extends React.Component {
                                 <td>{currentProduct.quantity_left}</td>
                                 <td>{currentProduct.seller_id}</td>
                                 <td>{currentProduct.status}</td>
+                                <td><button onClick={() => this.func(currentProduct)}>Seller Reviews</button></td>
                                 <td><button onClick={() => this.edit(currentProduct)}>Order</button></td>
                             </tr>
                         )
@@ -123,7 +144,8 @@ class TableContent extends React.Component {
                 }
                 </tbody>
             </table>
-            {this.state.showComponent && <PlaceOrder buy={this.state.buy}/>}
+            {this.state.showComponent && <PlaceOrder buy={this.state.togo}/>}
+            {this.state.showComponent2 && <SeeReviews buy={this.state.buy} seller={this.state.seller} avg={this.state.avg}/>}
             </div>
         )
     }
@@ -199,6 +221,49 @@ class PlaceOrder extends React.Component {
             <br></br><br></br>
             </div>
             <br></br></div>
+        )
+    }
+}
+
+class SeeReviews extends React.Component{
+        
+    constructor(props) {
+        super(props);
+        
+    }
+    
+
+    render() {
+        return (
+            <div class="border col-sm">
+                <br></br>
+                <h3>Reviews for {this.props.seller}</h3>
+                <h4>Average Rating: {this.props.avg}</h4>
+            <table className="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Review By</th>
+                        <th>Rating</th>
+                        <th>Review</th>
+                    </tr>
+                </thead>
+                <tbody>
+                { 
+                    this.props.buy.map((currentProduct, i) => {
+                        return (
+                            <tr>
+                                <td>{currentProduct.product_name}</td>
+                                <td>{currentProduct.buyer_id}</td>
+                                <td>{currentProduct.rating}</td>
+                                <td>{currentProduct.review}</td>
+                            </tr>
+                        )
+                    })
+                }
+                </tbody>
+            </table>
+            </div>
         )
     }
 }

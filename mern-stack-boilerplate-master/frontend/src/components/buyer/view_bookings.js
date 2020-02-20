@@ -89,18 +89,27 @@ class PlaceOrder extends React.Component {
             user: localStorage.getItem("user")
         }
 
-        axios.post('http://localhost:4000/buyer/getitnow',send)
-             .then(response => {
-                this.setState({cancelled: response.data[0].status_by_buyer});
-                console.log(response.data[0])
-             })
-             .catch(function(error) {
-                 console.log(error);
-        })
+        // axios.post('http://localhost:4000/buyer/getitnow',send)
+        //      .then(response => {
+        //         this.setState({cancelled: response.data[0].status_by_buyer});
+        //         // console.log(response.data[0])
+        //      })
+        //      .catch(function(error) {
+        //          console.log(error);
+        // })
     }
 
     onSubmit(e) {
         e.preventDefault();
+        console.log(this.props.buy.status)
+        if(this.props.buy.status==="Dispatched"){
+            this.setState({
+                showComponent: true
+            });
+        }   
+        else{
+            alert("Cannot write a review unless product is dispatched")
+        }
         // console.log("buy");
         // console.log(this.props.buy);
 
@@ -140,14 +149,155 @@ class PlaceOrder extends React.Component {
             <p>Quantity Left: {this.props.buy.quantity_left}</p>
             {/* <p>Status by Buyer: {this.state.cancelled}</p> */}
             
-                {/* <form onSubmit={this.onSubmit}>        
+                <form onSubmit={this.onSubmit}>        
                         <div className="form-group">
-                            <input type="submit" value="Cancel" className="btn btn-primary" />
+                            <input type="submit" value="Review" className="btn btn-primary" />
                         </div>
-                </form> */}
+                </form>
             <br></br><br></br>
+            {this.state.showComponent && <WriteReview buy={this.props.buy}/>}<br></br>
             </div>
             <br></br></div>
+        )
+    }
+}
+
+class WriteReview extends React.Component{
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            username: '',
+            user_type: ''  
+        }
+
+        this.onChangeUsername = this.onChangeUsername.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+        this.handleOptionChange = this.handleOptionChange.bind(this);
+    }
+
+    handleOptionChange = changeEvent => {
+        this.setState({
+          user_type: changeEvent.target.value });
+      };
+
+
+    onChangeUsername(event) {
+        this.setState({ username: event.target.value });
+    }
+
+    onSubmit(e) {
+        e.preventDefault();
+
+        const send = {
+            item: this.props.buy,
+            rating: this.state.user_type,
+            review: this.state.username,
+            user: localStorage.getItem("user")
+        }
+        
+        console.log(send)
+        axios.post('http://localhost:4000/addreview', send)
+            .then(res =>{ 
+                // console.log(res.data.msg);
+                alert(res.data.msg)
+            });
+
+        this.setState({
+            username: '',
+            user_type: ''
+        });
+    }
+
+    render() {
+        return (
+            
+            <div class="border col-sm">
+                <br></br>
+                <h3>Write a Review!!</h3>
+                <br></br>
+                <form onSubmit={this.onSubmit}>
+                    <div className="form-group">
+                        <label>Review</label>
+                        <input type="text"
+                            className="form-control"
+                            value={this.state.username}
+                            onChange={this.onChangeUsername}
+                        />
+                    </div>
+                    
+                    <div class="style=padding:100px;">
+                        Rating:<br></br>
+                    <div className="form-group">
+                        <label>
+                            <input
+                                type="radio"
+                                name="react-tips"
+                                value="1"
+                                checked={this.state.user_type === "1"}
+                                onChange={this.handleOptionChange}
+                                className="form-check-input"
+                            />
+                            ⭐
+                        </label>
+                     </div>
+                     <div className="form-group">   
+                        <label>
+                            <input
+                                type="radio"
+                                name="react-tips"
+                                value="2"
+                                checked={this.state.user_type === "2"}
+                                onChange={this.handleOptionChange}
+                                className="form-check-input"
+                            />
+                            ⭐⭐
+                        </label>
+                    </div>
+                    <div className="form-group">   
+                        <label>
+                            <input
+                                type="radio"
+                                name="react-tips"
+                                value="3"
+                                checked={this.state.user_type === "3"}
+                                onChange={this.handleOptionChange}
+                                className="form-check-input"
+                            />
+                            ⭐⭐⭐
+                        </label>
+                    </div><div className="form-group">   
+                        <label>
+                            <input
+                                type="radio"
+                                name="react-tips"
+                                value="4"
+                                checked={this.state.user_type === "4"}
+                                onChange={this.handleOptionChange}
+                                className="form-check-input"
+                            />
+                            ⭐⭐⭐⭐
+                        </label>
+                    </div><div className="form-group">   
+                        <label>
+                            <input
+                                type="radio"
+                                name="react-tips"
+                                value="5"
+                                checked={this.state.user_type === "5"}
+                                onChange={this.handleOptionChange}
+                                className="form-check-input"
+                            />
+                            ⭐⭐⭐⭐⭐
+                        </label>
+                    </div>
+                    </div>
+                    <div className="form-group">
+                        <input type="submit" value="Create User" className="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
         )
     }
 }

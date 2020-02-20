@@ -9,6 +9,12 @@ let User = new mongoose.Schema({
     },
     user_type: {
         type: String
+    },
+    sum_ratings: {
+        type: Number,
+    },
+    num_ratings: {
+        type: Number
     }
 });
 

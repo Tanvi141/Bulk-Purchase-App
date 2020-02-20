@@ -33,7 +33,7 @@ function App() {
                 <Link to="/logout" className="nav-link">Logout</Link>
               </li>
               {/* <li className="navbar-item"> */}
-              {/* <Link to="/logout" className="nav-link">{localStorage.getItem("user")}</Link></li> */}
+              {/* <Link to="/logout" className="nav-link">{localStorage.getItem("user"),alert("Logged Out")}</Link></li> */}
             </ul>
           </div>
         </nav>

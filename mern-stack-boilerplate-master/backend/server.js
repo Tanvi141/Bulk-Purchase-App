@@ -12,7 +12,8 @@ const userRoutes = express.Router();
 
 let User = require('./models/user');
 let Products = require('./models/products');
-let Bookings = require('./models/bookings')
+let Bookings = require('./models/bookings');
+let Reviews = require('./models/reviews');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -47,6 +48,7 @@ userRoutes.route('/add').post(function (req, res) {
     };
 
     let user = new User(req.body);
+
     const { username, password, user_type } = req.body;
     if (!username || !password || !user_type) {
         send.msg="Incomplete fields";
@@ -54,6 +56,7 @@ userRoutes.route('/add').post(function (req, res) {
         res.json(send)
     }
 
+    else{
     User.findOne({ username })
         .then(user => {
             if (user) {
@@ -65,7 +68,9 @@ userRoutes.route('/add').post(function (req, res) {
             const newuser = new User({
                 username,
                 password,
-                user_type
+                user_type,
+                sum_ratings: 0, //default 3
+                num_ratings: 0
             });
 
             bcrypt.genSalt(10, (err, salt) => {
@@ -81,6 +86,7 @@ userRoutes.route('/add').post(function (req, res) {
                 })      
             })
         })
+    }
 });
 
 // Login an existing user
@@ -185,6 +191,25 @@ userRoutes.route('/seller/add_product').post(function (req, res) {
 
 //Seller views all products of certain type
 userRoutes.route('/seller/view').post(function (req, res) {
+    //update statuses also
+    Products.update({ quantity_left: 0, status:"Available"},{$set:{status:"Posted"}},{multi:true},
+        function(err, product) {
+            if (err){
+                console.log(err);
+            }
+            else {  
+        }
+    });
+
+    Products.update({quantity_left:{$ne:0}, status:"Posted"},{$set:{status:"Available"}},{multi:true},
+        function(err, product) {
+            if (err){
+                console.log(err);
+            }
+            else {  
+        }
+    });
+
     Products.find({seller_id: req.body.user, status: req.body.type },function(err, result) {
         if (err) throw err;
         res.json(result)
@@ -309,7 +334,7 @@ userRoutes.route('/buyer/trybuy').post(function (req, res) {
                 res.json(send)
             }
             else{
-                Products.findOneAndUpdate({ _id:req.body.item._id },{$inc:{quantity_left:-1*Number(req.body.value)}}, function(err, product) {
+                Products.findOneAndUpdate({$and :[{ _id:req.body.item._id }, { $or : [ { status: "Available" }, { status: "Posted" } ] } ]},{$inc:{quantity_left:-1*Number(req.body.value)}}, function(err, product) {
                     if (err){
                         console.log(err);
                         send.status=2;
@@ -360,7 +385,7 @@ userRoutes.route('/buyer/view').post(function (req, res) {
             else {  
         }
     });
-    
+
     Bookings.find({buyer_name: req.body.user},function(err, result) {
         if (err) throw err;
         res.json(result)
@@ -393,7 +418,6 @@ userRoutes.route('/buyer/volstatus').post(function (req, res) {
         res.json(result)
     });
 });
-
 
 //Get bookings of a buyer
 userRoutes.route('/buyer/lol').post(function (req, res) {
@@ -476,6 +500,97 @@ userRoutes.route('/buyer/getitnow').post(function (req, res) {
         res.json(result)
     });
 });
+
+//Review an order
+userRoutes.route('/addreview').post(function (req, res) {
+
+    let send={
+        status:"-1",
+        msg:"temp"
+    };
+
+    console.log(req.body)
+    
+    if (req.body.rating==="" || req.body.review==="") {
+        send.msg="Incomplete fields";
+        send.status="2";
+        res.json(send)
+    }
+
+    else if(req.body.item.status!="Dispatched"){
+        send.msg="Can only write a review for Dispatched products";
+        send.status="3";
+        res.json(send)
+    }
+
+    else{
+        Reviews.find({product_id: req.body.item._id,buyer_id: req.body.user}, function(err, product) {
+            if (err)
+                console.log(err);
+            else {
+                if (product.length!=0) {
+                    send.msg="Already submitted a review for this product";
+                    send.status="1";
+                    res.json(send)
+                }
+                else{
+                    User.update({username: req.body.item.seller_id},{$inc:{sum_ratings:Number(req.body.rating)},$inc:{num_ratings:1}},function(err, product) {
+                        if (err){
+                            console.log(err);
+                        }
+                        else {  
+                            const newentry = new Reviews({
+                                seller_id: req.body.item.seller_id,
+                                product_name: req.body.item.name,
+                                review: req.body.review,
+                                rating: Number(req.body.rating),
+                                buyer_id: req.body.user,
+                                product_id: req.body.item._id
+                            });
+                            newentry.save()
+                            send.msg="Succesfully submitted review";
+                            send.status="1";
+                            res.json(send)
+                        }
+                    });
+                }
+            }
+        });
+    } 
+});
+
+//Get all the reviews of a seller
+userRoutes.route('/buyer/getreview').post(function (req, res) {
+    
+    User.findOne({ username: req.body.seller_id })
+        .then(user => {
+            Reviews.find({seller_id: req.body.seller_id},function(err, result) {
+                if (err) throw err;
+                else{
+
+                    if(user.num_ratings===0){
+                        send={
+                            result: result,
+                            avg: 0
+                        }
+                        res.json(send)
+                    }
+                    else{
+                        send={
+                            result: result,
+                            avg: Number(user.sum_ratings)/Number(user.num_ratings)
+                        }
+                        res.json(send)
+                    }
+                    
+                    
+                }
+            });
+            // console.log(Number(user.sum_ratings)/Number(user.num_ratings))
+        })
+});
+
+
 
 app.use('/', userRoutes);
 
