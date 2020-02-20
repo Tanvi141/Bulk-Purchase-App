@@ -237,10 +237,26 @@ userRoutes.route('/buyer/results').post(function (req, res) {
         }
     });
 
-    Products.find({name: req.body.search, status:"Available"},function(err, result) {
-        if (err) throw err;
-        res.json(result)
-    });
+    if(req.body.user_type==="Price"){
+        Products.find({name: req.body.search, status:"Available"},function(err, result) {
+            if (err) throw err;
+            res.json(result)
+        }).sort({price: 1});
+    }
+
+    else if(req.body.user_type==="Rating"){
+        Products.find({name: req.body.search, status:"Available"},function(err, result) {
+            if (err) throw err;
+            res.json(result)
+        }).sort({avg: -1});
+    }
+
+    else{
+        Products.find({name: req.body.search, status:"Available"},function(err, result) {
+            if (err) throw err;
+            res.json(result)
+        }).sort({quantity_left: -1});
+    }
 });
 
 //Delete a product by seller

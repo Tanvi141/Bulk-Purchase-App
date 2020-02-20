@@ -10,11 +10,18 @@ export default class ViewItems extends Component {
         this.state.Name="";
         this.state={
             showComponent : false,
+            user_type:"Price"
         };
 
         this.onChangeName = this.onChangeName.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.handleOptionChange = this.handleOptionChange.bind(this);
     }
+
+    handleOptionChange = changeEvent => {
+        this.setState({
+          user_type: changeEvent.target.value });
+      };
 
     onChangeName(event) {
         this.setState({ Name: event.target.value });
@@ -25,7 +32,8 @@ export default class ViewItems extends Component {
         console.log(this.state.Name)
 
         const send={
-            search: this.state.Name
+            search: this.state.Name,
+            filter: this.state.user_type
         }
     
         axios.post('http://localhost:4000/buyer/results',send)
@@ -62,6 +70,45 @@ export default class ViewItems extends Component {
                         />
                     </div>         
                     <div className="form-group">
+                        <label>
+                            <input
+                                type="radio"
+                                name="react-tips"
+                                value="Price"
+                                checked={this.state.user_type === "Price"}
+                                onChange={this.handleOptionChange}
+                                className="form-check-input"
+                            />
+                            Price
+                        </label>
+                     </div>
+                     <div className="form-group">   
+                        <label>
+                            <input
+                                type="radio"
+                                name="react-tips"
+                                value="Quantity Left"
+                                checked={this.state.user_type === "Quantity Left"}
+                                onChange={this.handleOptionChange}
+                                className="form-check-input"
+                            />
+                            Quantity Left
+                        </label>
+                    </div>
+                    <div className="form-group">
+                        <label>
+                            <input
+                                type="radio"
+                                name="react-tips"
+                                value="Rating"
+                                checked={this.state.user_type === "Rating"}
+                                onChange={this.handleOptionChange}
+                                className="form-check-input"
+                            />
+                            Rating
+                        </label>
+                     </div>
+                     <div className="form-group">
                         <input type="submit" value="Search" className="btn btn-primary" />
                     </div>
                 </form>
