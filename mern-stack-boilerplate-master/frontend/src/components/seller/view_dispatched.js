@@ -5,7 +5,11 @@ export default class ViewDispatched extends Component {
     
     constructor(props) {
         super(props);
-        this.state = {products: []}
+        this.state = {
+            products: [],
+            showComponent2: false,
+            ptosend:""    
+        }
     }
 
     componentDidMount(){
@@ -24,18 +28,21 @@ export default class ViewDispatched extends Component {
              })
     }
 
-    // edit = (data) => { 
-    //     // console.log(data)
-    //     axios.post('http://localhost:4000/seller/dispatch_product',data)
-    //          .then(response => {
-    //              console.log(response);
-    //              alert(response.data.msg)
-    //          })
-    //          .catch(function(error) {    
-    //             console.log(error);
-    //          })
-    //     // somehow reload the page to remove the entry
-    // }
+    func = (data) => { 
+        // console.log(data)
+        axios.post('http://localhost:4000/buyer/viewallreviews',data)
+             .then(response => {
+                this.setState({
+                    buy: response.data,
+                    ptosend: data.name,
+                    showComponent2: true
+                });
+            })
+             .catch(function(error) {
+                 console.log(error);
+            })
+        
+    }
 
 
     render() {
@@ -47,8 +54,8 @@ export default class ViewDispatched extends Component {
                             <th>Name</th>
                             <th>Price</th>
                             <th>Quantity</th>
-                            {/* <th></th>
-                            <th></th> */}
+                            <th></th>
+                            {/* <th></th> */}
                         </tr>
                     </thead>
                     <tbody>
@@ -60,13 +67,15 @@ export default class ViewDispatched extends Component {
                                     <td>{currentProduct.price}</td>
                                     <td>{currentProduct.quantity}</td>
                                     {/* <td><button onClick={() => this.delete(currentProduct)}>Delete</button></td> */}
-                                    {/* <td><button onClick={() => this.edit(currentProduct)}>Reviews</button></td> */}
+                                    <td><button onClick={() => this.func(currentProduct)}>Reviews</button></td>
                                 </tr>
                             )
                         })
                     }
                     </tbody>
                 </table>
+                <br></br>
+            {this.state.showComponent2 && <SeeReviews buy={this.state.buy} ptosend={this.state.ptosend}/>}
             </div>
         )
     }
@@ -84,8 +93,7 @@ class SeeReviews extends React.Component{
         return (
             <div class="border col-sm">
                 <br></br>
-                <h3>Reviews for {this.props.seller}</h3>
-                <h4>Average Rating: {this.props.avg}</h4>
+                <h3>Reviews for {this.props.ptosend}</h3>
             <table className="table table-striped">
                 <thead>
                     <tr>
@@ -93,6 +101,7 @@ class SeeReviews extends React.Component{
                         <th>Review By</th>
                         <th>Rating</th>
                         <th>Review</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>

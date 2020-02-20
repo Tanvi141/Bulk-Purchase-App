@@ -571,7 +571,7 @@ userRoutes.route('/buyer/getreview').post(function (req, res) {
                     if(user.num_ratings===0){
                         send={
                             result: result,
-                            avg: 0
+                            avg: "-"
                         }
                         res.json(send)
                     }
@@ -590,6 +590,13 @@ userRoutes.route('/buyer/getreview').post(function (req, res) {
         })
 });
 
+//For viewing in dispatched orders
+userRoutes.route('/buyer/viewallreviews').post(function (req, res) {
+    Reviews.find({product_id:req.body._id},function(err, result) {
+        if (err) throw err;
+        res.json(result)
+    });
+});
 
 
 app.use('/', userRoutes);
