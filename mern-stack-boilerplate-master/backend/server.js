@@ -238,7 +238,7 @@ userRoutes.route('/buyer/results').post(function (req, res) {
     });
 
     if(req.body.user_type==="Price"){
-        Products.find({name: req.body.search, status:"Available"},function(err, result) {
+        Products.find({name: {$regex: req.body.search}, status:"Available"},function(err, result) {
             if (err) throw err;
             res.json(result)
         }).sort({price: 1});
@@ -550,7 +550,7 @@ userRoutes.route('/addreview').post(function (req, res) {
                     res.json(send)
                 }
                 else{
-                    User.update({username: req.body.item.seller_id},{$inc:{sum_ratings:Number(req.body.rating)},$inc:{num_ratings:1}},function(err, product) {
+                    User.update({username: req.body.item.seller_id},{$inc:{num_ratings:1, sum_ratings:Number(req.body.rating)}},function(err, product) {
                         if (err){
                             console.log(err);
                         }

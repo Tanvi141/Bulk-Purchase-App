@@ -294,7 +294,7 @@ class WriteReview extends React.Component{
                     </div>
                     </div>
                     <div className="form-group">
-                        <input type="submit" value="Create User" className="btn btn-primary" />
+                        <input type="submit" value="Submit" className="btn btn-primary" />
                     </div>
                 </form>
             </div>

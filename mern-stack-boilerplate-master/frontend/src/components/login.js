@@ -80,7 +80,7 @@ export default class CreateUser extends Component {
 
                     <div className="form-group">
                         <label>Password: </label>
-                        <input type="text"
+                        <input type="password"
                             className="form-control"
                             value={this.state.password}
                             onChange={this.onChangepassword}

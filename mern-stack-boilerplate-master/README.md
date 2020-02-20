@@ -1,4 +1,5 @@
-# MERN Stack Boilerplate
+# Bulk-Purchase-App
+## Web application based on MERN stack - MongoDB, Express.js, React.js, and Node.js.
 
 ## Setup
 
@@ -25,17 +26,7 @@ Install the community edition [here](https://docs.mongodb.com/manual/installatio
 npm install -g create-react-app
 ```
 
-To create a new React app:
-```
-create-react-app name_of_app
-```
-
-To run the app, cd into the directory and do:
-```
-npm start
-```
-
-## Running the boilerplate
+## Running the App
 
 Run Mongo daemon:
 ```
@@ -58,9 +49,9 @@ npm start
 
 Run React:
 ```
-cd frontend
-npm install/
+cd frontend/
+npm install
 npm start
 ```
-Navigate to localhost:3000/ in your browser.
+Navigate to localhost:3000/ in your browser to access the app.
 

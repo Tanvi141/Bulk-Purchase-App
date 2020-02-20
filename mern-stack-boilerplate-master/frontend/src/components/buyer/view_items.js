@@ -68,7 +68,8 @@ export default class ViewItems extends Component {
                             value={this.state.Name}
                             onChange={this.onChangeName}
                         />
-                    </div>         
+                    </div> 
+                    <h4>Search By:</h4>        
                     <div className="form-group">
                         <label>
                             <input

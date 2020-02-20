@@ -23,9 +23,9 @@ function App() {
               <li className="navbar-item">
                 <Link to="/login" className="nav-link">Login</Link>
               </li>
-              <li className="navbar-item">
+              {/* <li className="navbar-item">
                 <Link to="/" className="nav-link">Users</Link>
-              </li>
+              </li> */}
               <li className="navbar-item">
                 <Link to="/create" className="nav-link">Create User</Link>
               </li>
